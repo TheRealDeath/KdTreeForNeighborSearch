@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch Runner",
+            "request": "launch",
+            "mainClass": "Binary_Trees.Runner",
+            "projectName": "arkprojectThing_94fffaa2"
+        },
+        {
+            "type": "java",
             "name": "Launch Main",
             "request": "launch",
             "mainClass": "DataSciences.Main",

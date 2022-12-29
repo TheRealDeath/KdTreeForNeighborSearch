@@ -45,20 +45,24 @@ public class Tree {
     private Node insertRec(Node root, Coordinate temp, int depth) {
         if(root == null) return createNode(temp);
         int cd = depth % k;
-        if(temp.points[cd] < root.points[cd]) root.left = insertRec(root.left,temp,depth+1);
+        if(temp.points[cd] <= root.points[cd]) root.left = insertRec(root.left,temp,depth+1);
         else root.right = insertRec(root.right,temp,depth+1);
         return root;
     }
     private double distance;
     private Node mostBest;
     private double[] splitting;
+    private int q;
     Node nearestNeighbor(double[] points) {
+        q = 0;
         distance = Integer.MAX_VALUE;
         splitting = new double[k];
         Node player = new Node(new ArrayList<>(),points);
         nearestNeighborRec(root,player,0);
         if(distance(root.points,player) < distance) {mostBest = root;}
         splitting = null;
+        q++;
+        System.out.println(q);
         return mostBest;
     }
     private double distance(double[] points, Node points2) {
@@ -71,10 +75,12 @@ public class Tree {
     private Node nearestNeighborRec(Node root,Node temp, int depth) {
         if(root != null && root.right == null && root.left == null) return root;
         else if(root != null) {
+            q++;
             int cd = depth % k;
-            splitting[cd] = root.points[cd];
+            if(mostBest == null) splitting[cd] = root.points[cd];
             Node best;
-            boolean b = temp.points[cd] < root.points[cd];
+            double dx = root.points[cd]-temp.points[cd];
+            boolean b = dx > 0;
             if(b) best = nearestNeighborRec(root.left, temp, depth+1);
             else best = nearestNeighborRec(root.right, temp, depth+1);
             double tempDouble = best.euclidDistance(temp);
@@ -82,11 +88,8 @@ public class Tree {
                 distance = tempDouble;
                 mostBest = best;
             }
-            if(distance(splitting, root) > distance) { //approx
-            //if(true) { //brute
-                if(b && root.right != null) nearestNeighborRec(root.right, temp, depth+1);
-                else if(root.left != null) nearestNeighborRec(root.left, temp, depth+1);
-            } 
+            double hyper = dx * dx;
+            if(hyper < distance) nearestNeighborRec(dx > 0 ?root.right : root.left, temp, depth+1);
             return best;
         }
         Node temp1 = new Node(new ArrayList<>(),new double[]{-1000.0,-1000.0});
